@@ -1,14 +1,15 @@
 'use client';
 
 import Image from 'next/image';
-import { MapPin, Clock } from 'lucide-react';
+import Link from 'next/link';
+import { MapPin, MessageCircle } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 
 import type { Item } from '@/lib/types';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { CategoryIcon } from '@/components/icons';
-import { ContactDialog } from '@/components/contact-dialog';
 
 interface ItemCardProps {
   item: Item;
@@ -45,7 +46,12 @@ export function ItemCard({ item }: ItemCardProps) {
         </div>
       </CardContent>
       <CardFooter className="p-4 pt-0">
-        <ContactDialog item={item} />
+        <Button asChild className="w-full">
+            <Link href={`/item/${item.id}/chat`}>
+                <MessageCircle className="mr-2 h-4 w-4" />
+                Chat about this item
+            </Link>
+        </Button>
       </CardFooter>
     </Card>
   );

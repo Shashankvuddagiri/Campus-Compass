@@ -1,10 +1,12 @@
 'use server';
 
-import type { Item } from './types';
+import type { Item, ChatMessage } from './types';
+import { randomUUID } from 'crypto';
 
 let items: Item[] = [
   {
     id: '1',
+    chatId: randomUUID(),
     name: 'MacBook Pro 14"',
     description: 'A silver MacBook Pro with a small scratch on the corner and a sticker of a cat.',
     category: 'Electronics',
@@ -16,6 +18,7 @@ let items: Item[] = [
   },
   {
     id: '2',
+    chatId: randomUUID(),
     name: 'Hydro Flask Water Bottle',
     description: 'A blue Hydro Flask, 32 oz. It is covered in various national park stickers.',
     category: 'Other',
@@ -27,6 +30,7 @@ let items: Item[] = [
   },
   {
     id: '3',
+    chatId: randomUUID(),
     name: 'Organic Chemistry Textbook',
     description: '8th Edition of "Organic Chemistry" by Paula Yurkanis Bruice. Has some highlighting in the first few chapters.',
     category: 'Books',
@@ -38,6 +42,7 @@ let items: Item[] = [
   },
   {
     id: '4',
+    chatId: randomUUID(),
     name: 'Student ID Card',
     description: 'Student ID for Jane Doe. The picture is slightly faded.',
     category: 'ID Cards',
@@ -49,6 +54,7 @@ let items: Item[] = [
   },
   {
     id: '5',
+    chatId: randomUUID(),
     name: 'Black North Face Jacket',
     description: 'A black North Face jacket, size Medium. There is a small tear on the left sleeve.',
     category: 'Clothing',
@@ -60,6 +66,7 @@ let items: Item[] = [
   },
   {
     id: '6',
+    chatId: randomUUID(),
     name: 'Wireless Mouse',
     description: 'A gray wireless Logitech mouse. Was found near the computer lab entrance.',
     category: 'Electronics',
@@ -71,6 +78,8 @@ let items: Item[] = [
   },
 ];
 
+let messages: ChatMessage[] = [];
+
 // In-memory store, mimic async database call
 export const getItems = async (): Promise<Item[]> => {
   return new Promise((resolve) => {
@@ -80,6 +89,14 @@ export const getItems = async (): Promise<Item[]> => {
   });
 };
 
+export const getItemById = async (id: string): Promise<Item | undefined> => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(items.find(item => item.id === id));
+    }, 200);
+  });
+}
+
 export const getFoundItemsForMatching = async (): Promise<Item[]> => {
     return new Promise((resolve) => {
       setTimeout(() => {
@@ -88,12 +105,13 @@ export const getFoundItemsForMatching = async (): Promise<Item[]> => {
     });
   };
 
-export const addItem = async (item: Omit<Item, 'id' | 'reportedAt' | 'imageUrl'>): Promise<Item> => {
+export const addItem = async (item: Omit<Item, 'id' | 'chatId' | 'reportedAt' | 'imageUrl'>): Promise<Item> => {
     return new Promise((resolve) => {
       setTimeout(() => {
         const newItem: Item = {
           ...item,
           id: Date.now().toString(),
+          chatId: randomUUID(),
           reportedAt: new Date(),
           imageUrl: 'https://placehold.co/600x400.png',
         };
@@ -102,3 +120,27 @@ export const addItem = async (item: Omit<Item, 'id' | 'reportedAt' | 'imageUrl'>
       }, 500);
     });
   };
+
+export const getMessagesByChatId = async (chatId: string): Promise<ChatMessage[]> => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(messages.filter(msg => msg.chatId === chatId).sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime()));
+    }, 200);
+  });
+}
+
+export const addMessage = async (chatId: string, text: string, sender: 'Owner' | 'Finder'): Promise<ChatMessage> => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      const newMessage: ChatMessage = {
+        id: randomUUID(),
+        chatId,
+        text,
+        sender,
+        timestamp: new Date(),
+      };
+      messages.push(newMessage);
+      resolve(newMessage);
+    }, 200);
+  });
+}
