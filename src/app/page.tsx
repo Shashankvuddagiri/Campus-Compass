@@ -20,6 +20,7 @@ import { getItems, getFoundItemsForMatching } from '@/lib/data';
 import { matchItems } from '@/ai/flows/match-items';
 import { MatchingResultsDialog } from '@/components/matching-results-dialog';
 import { ChatAssistant } from '@/components/chat-assistant';
+import { ItemDetailsDialog } from '@/components/item-details-dialog';
 
 export default function Home() {
   const [isPending, startTransition] = useTransition();
@@ -31,13 +32,16 @@ export default function Home() {
   const [isReportDialogOpen, setReportDialogOpen] = useState(false);
   const [matchedItems, setMatchedItems] = useState<Item[]>([]);
   const [isMatchDialogOpen, setMatchDialogOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<Item | null>(null);
+  const [isDetailsDialogOpen, setDetailsDialogOpen] = useState(false);
+
+  const fetchItems = async () => {
+    const allItems = await getItems();
+    setItems(allItems);
+  };
 
   useEffect(() => {
     setIsClient(true);
-    const fetchItems = async () => {
-      const allItems = await getItems();
-      setItems(allItems);
-    };
     fetchItems();
   }, []);
 
@@ -65,6 +69,15 @@ export default function Home() {
         }
       });
     }
+  };
+
+  const handleOpenDetails = (item: Item) => {
+    setSelectedItem(item);
+    setDetailsDialogOpen(true);
+  }
+
+  const handleItemUpdate = () => {
+    fetchItems();
   };
 
   const filteredItems = useMemo(() => {
@@ -138,10 +151,10 @@ export default function Home() {
                 </Select>
               </div>
               <TabsContent value="lost">
-                <ItemGrid items={filteredItems} isLoading={isPending} />
+                <ItemGrid items={filteredItems} isLoading={isPending} onCardClick={handleOpenDetails} />
               </TabsContent>
               <TabsContent value="found">
-                <ItemGrid items={filteredItems} isLoading={isPending} />
+                <ItemGrid items={filteredItems} isLoading={isPending} onCardClick={handleOpenDetails} />
               </TabsContent>
             </Tabs>
           </div>
@@ -167,6 +180,14 @@ export default function Home() {
         items={matchedItems}
         isLoading={isPending}
       />
+      {selectedItem && (
+        <ItemDetailsDialog
+          isOpen={isDetailsDialogOpen}
+          setIsOpen={setDetailsDialogOpen}
+          item={selectedItem}
+          onItemUpdate={handleItemUpdate}
+        />
+      )}
     </>
   );
 }

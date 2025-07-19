@@ -6,6 +6,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 interface ItemGridProps {
   items: Item[];
   isLoading: boolean;
+  onCardClick: (item: Item) => void;
 }
 
 function ItemGridSkeleton() {
@@ -24,7 +25,7 @@ function ItemGridSkeleton() {
     );
 }
 
-export function ItemGrid({ items, isLoading }: ItemGridProps) {
+export function ItemGrid({ items, isLoading, onCardClick }: ItemGridProps) {
   if (isLoading) {
     return <ItemGridSkeleton />;
   }
@@ -44,7 +45,7 @@ export function ItemGrid({ items, isLoading }: ItemGridProps) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
       {items.map((item) => (
-        <ItemCard key={item.id} item={item} />
+        <ItemCard key={item.id} item={item} onClick={() => onCardClick(item)} />
       ))}
     </div>
   );

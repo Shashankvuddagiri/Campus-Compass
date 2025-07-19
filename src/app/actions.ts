@@ -1,8 +1,9 @@
 'use server';
 
 import { z } from 'zod';
-import { addItem } from '@/lib/data';
+import { addItem, updateItemStatus, deleteItem } from '@/lib/data';
 import type { Item, ItemCategory } from '@/lib/types';
+import { revalidatePath } from 'next/cache';
 
 const FormSchema = z.object({
   name: z.string().min(3, { message: 'Item name must be at least 3 characters.' }),
@@ -52,10 +53,31 @@ export async function reportItemAction(
       category: validatedFields.data.category as ItemCategory,
     });
     
+    revalidatePath('/');
     return { message: 'Item reported successfully!', newItem };
   } catch (error) {
     return {
       message: 'Database Error: Failed to report item.',
     };
   }
+}
+
+export async function markAsFoundAction(itemId: string) {
+    try {
+        const updatedItem = await updateItemStatus(itemId, 'Found');
+        revalidatePath('/');
+        return { success: true, item: updatedItem, message: 'Item marked as found!' };
+    } catch (error) {
+        return { success: false, message: 'Failed to mark item as found.' };
+    }
+}
+
+export async function claimItemAction(itemId: string) {
+    try {
+        await deleteItem(itemId);
+        revalidatePath('/');
+        return { success: true, message: 'Item has been claimed and removed.' };
+    } catch (error) {
+        return { success: false, message: 'Failed to claim item.' };
+    }
 }

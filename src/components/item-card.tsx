@@ -1,9 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import Link from 'next/link';
-import { MapPin, MessageCircle } from 'lucide-react';
-import { formatDistanceToNow } from 'date-fns';
+import { MapPin, Eye } from 'lucide-react';
 
 import type { Item } from '@/lib/types';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -13,9 +11,16 @@ import { CategoryIcon } from '@/components/icons';
 
 interface ItemCardProps {
   item: Item;
+  onClick: () => void;
 }
 
-export function ItemCard({ item }: ItemCardProps) {
+export function ItemCard({ item, onClick }: ItemCardProps) {
+  const formattedDate = new Date(item.reportedAt).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+
   return (
     <Card className="flex flex-col h-full overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
       <CardHeader className="p-0">
@@ -36,7 +41,7 @@ export function ItemCard({ item }: ItemCardProps) {
                 {item.category}
             </Badge>
             <span className="text-xs text-muted-foreground text-right whitespace-nowrap">
-              {formatDistanceToNow(new Date(item.reportedAt), { addSuffix: true })}
+              {formattedDate}
             </span>
         </div>
         <CardTitle className="text-lg font-semibold mb-2 line-clamp-2">{item.name}</CardTitle>
@@ -46,11 +51,9 @@ export function ItemCard({ item }: ItemCardProps) {
         </div>
       </CardContent>
       <CardFooter className="p-4 pt-0">
-        <Button asChild className="w-full">
-            <Link href={`/item/${item.id}/chat`}>
-                <MessageCircle className="mr-2 h-4 w-4" />
-                Chat about this item
-            </Link>
+        <Button onClick={onClick} className="w-full">
+            <Eye className="mr-2 h-4 w-4" />
+            View Details
         </Button>
       </CardFooter>
     </Card>

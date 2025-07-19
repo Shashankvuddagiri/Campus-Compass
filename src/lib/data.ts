@@ -144,3 +144,31 @@ export const addMessage = async (chatId: string, text: string, sender: 'Owner' |
     }, 200);
   });
 }
+
+export const updateItemStatus = async (itemId: string, status: 'Lost' | 'Found'): Promise<Item> => {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            const itemIndex = items.findIndex(item => item.id === itemId);
+            if (itemIndex > -1) {
+                items[itemIndex].status = status;
+                resolve(items[itemIndex]);
+            } else {
+                reject(new Error('Item not found'));
+            }
+        }, 300);
+    });
+};
+
+export const deleteItem = async (itemId: string): Promise<{ success: true }> => {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            const initialLength = items.length;
+            items = items.filter(item => item.id !== itemId);
+            if (items.length < initialLength) {
+                resolve({ success: true });
+            } else {
+                reject(new Error('Item not found'));
+            }
+        }, 300);
+    });
+};
