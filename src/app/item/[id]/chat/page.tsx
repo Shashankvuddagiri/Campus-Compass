@@ -1,7 +1,7 @@
 'use client';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useActionState } from 'react';
 import Link from 'next/link';
-import { useFormStatus, useFormState } from 'react-dom';
+import { useFormStatus } from 'react-dom';
 import { Send, ArrowLeft, User, Bot, Loader2, Compass } from 'lucide-react';
 
 import type { Item, ChatMessage } from '@/lib/types';
@@ -31,7 +31,7 @@ export default function ChatPage({ params }: { params: { id: string } }) {
     const formRef = useRef<HTMLFormElement>(null);
     const scrollAreaRef = useRef<HTMLDivElement>(null);
 
-    const [state, formAction] = useFormState(sendMessageAction, { success: false });
+    const [state, formAction] = useActionState(sendMessageAction, { success: false });
 
     useEffect(() => {
         async function loadData() {
