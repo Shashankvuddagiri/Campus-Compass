@@ -19,6 +19,7 @@ import { ItemGrid } from '@/components/item-grid';
 import { getItems, getFoundItemsForMatching } from '@/lib/data';
 import { matchItems } from '@/ai/flows/match-items';
 import { MatchingResultsDialog } from '@/components/matching-results-dialog';
+import { ChatAssistant } from '@/components/chat-assistant';
 
 export default function Home() {
   const [isPending, startTransition] = useTransition();
@@ -152,6 +153,8 @@ export default function Home() {
           </div>
         </footer>
       </div>
+
+      <ChatAssistant />
 
       <ReportItemDialog
         isOpen={isReportDialogOpen}
